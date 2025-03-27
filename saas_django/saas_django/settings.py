@@ -73,6 +73,8 @@ WSGI_APPLICATION = 'saas_django.wsgi.application'
 
 AUTH_USER_MODEL = 'accounts.User'
 
+LOGIN_REDIRECT_URL = '/api/v1/accounts/users'
+
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
