@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models, transaction
 
 # Create your models here.
-class CompanyManager(models.Model):
+class CompanyManager(models.Manager):
      # Manager for the company model
      # Handels Account Creation
 
@@ -13,6 +13,7 @@ class CompanyManager(models.Model):
             name=company_name,
             address= company_address
         )
+        company.save()
 
         user = User.objects.create_user(
             username=username,
