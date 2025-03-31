@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions
+
+from core.views import CompanySafeViewMaxin
 from . import serializers
 
 User = get_user_model()
@@ -12,7 +14,7 @@ class AccountCreate(generics.CreateAPIView): # CreateAPIView
 
 
 # Provides a list of users
-class UserList(generics.ListCreateAPIView):
+class UserList( CompanySafeViewMaxin, generics.ListCreateAPIView):
      name = 'user-list'
      permission_classes = (
           permissions.IsAuthenticated,
@@ -20,19 +22,9 @@ class UserList(generics.ListCreateAPIView):
      serializer_class = serializers.UserSerializer
      queryset = User.objects.all()
 
-     def perform_create(self, serializer):
-         company_id = self.request.user.company_id
-         serializer.save(company_id=company_id)
-
-    # overrides return only the results related to the company
-     def get_queryset(self):
-          # ensure taht the users belong to the company of the user that is making the request
-          company_id = self.request.user.company_id
-          return super().get_queryset().filter(company_id=company_id)
-
 
 # Provides a view for a single user 
-class UserDetail(generics.RetrieveUpdateDestroyAPIView): # RetrieveUpdateDestroyAPIView
+class UserDetail(CompanySafeViewMaxin, generics.RetrieveUpdateDestroyAPIView): # RetrieveUpdateDestroyAPIView
       name = 'user-detail'
       permission_classes = (
           permissions.IsAuthenticated,
@@ -40,9 +32,6 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView): # RetrieveUpdateDestroy
       serializer_class = serializers.UserSerializer
       queryset = User.objects.all()
 
-      def get_queryset(self):
-          company_id = self.request.user.company_id
-          return super().get_queryset().filter(company_id=company_id)
 
 
 # Provides the detailed view of a company 
